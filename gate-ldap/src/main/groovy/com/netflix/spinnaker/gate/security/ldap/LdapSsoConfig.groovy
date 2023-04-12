@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.ldap.core.DirContextAdapter
 import org.springframework.ldap.core.DirContextOperations
@@ -33,10 +34,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.session.web.http.DefaultCookieSerializer
@@ -46,7 +47,7 @@ import org.springframework.stereotype.Component
 @Configuration
 @SpinnakerAuthConfig
 @EnableWebSecurity
-class LdapSsoConfig extends WebSecurityConfigurerAdapter {
+class LdapSsoConfig {
 
   @Autowired
   AuthConfig authConfig
@@ -63,7 +64,7 @@ class LdapSsoConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   DefaultCookieSerializer defaultCookieSerializer
 
-  @Override
+  @Bean
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
     def ldapConfigurer =
@@ -90,15 +91,16 @@ class LdapSsoConfig extends WebSecurityConfigurerAdapter {
     }
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+  //protected void configure(HttpSecurity http) throws Exception {
     defaultCookieSerializer.setSameSite(null)
     http.formLogin()
     authConfig.configure(http)
-    http.addFilterBefore(new BasicAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter)
+    http.addFilterBefore(new BasicAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter) as SecurityFilterChain
   }
 
-  @Override
+  @Bean
   void configure(WebSecurity web) throws Exception {
     authConfig.configure(web)
   }

@@ -41,13 +41,13 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.extensions.saml2.config.SAMLConfigurer
 import org.springframework.security.saml.websso.WebSSOProfileConsumerImpl
 import org.springframework.security.saml.SAMLCredential
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.RememberMeServices
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices
 import org.springframework.session.web.http.DefaultCookieSerializer
@@ -63,7 +63,7 @@ import static org.springframework.security.extensions.saml2.config.SAMLConfigure
 @SpinnakerAuthConfig
 @EnableWebSecurity
 @Slf4j
-class SamlSsoConfig extends WebSecurityConfigurerAdapter {
+class SamlSsoConfig {
 
   @Autowired
   ServerProperties serverProperties
@@ -145,8 +145,8 @@ class SamlSsoConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   SAMLUserDetailsService samlUserDetailsService
 
-  @Override
-  void configure(HttpSecurity http) {
+  @Bean
+  public SecurityFilterChain configure(HttpSecurity http) throws Exception {
     //We need our session cookie to come across when we get redirected back from the IdP:
     defaultCookieSerializer.setSameSite(null)
     authConfig.configure(http)

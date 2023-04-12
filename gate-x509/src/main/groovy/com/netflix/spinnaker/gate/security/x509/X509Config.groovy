@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GroovyAccessibility
 
 package com.netflix.spinnaker.gate.security.x509
 
@@ -27,7 +29,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
 
@@ -40,7 +42,7 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher
 // and otherwise will just work(tm) if it is the only WebSecurityConfigurerAdapter
 // present as well
 @Order(2000)
-class X509Config extends WebSecurityConfigurerAdapter {
+class X509Config {
 
   @Value('${x509.subject-principal-regex:}')
   String subjectPrincipalRegex
@@ -51,8 +53,8 @@ class X509Config extends WebSecurityConfigurerAdapter {
   @Autowired
   X509AuthenticationUserDetailsService x509AuthenticationUserDetailsService
 
-  @Override
-  void configure(HttpSecurity http) {
+  @Bean
+   public SecurityFilterChain configure(HttpSecurity http) throws Exception {
     authConfig.configure(http)
     http.securityContext().securityContextRepository(new NullSecurityContextRepository())
     http.x509().authenticationUserDetailsService(x509AuthenticationUserDetailsService)
@@ -66,7 +68,7 @@ class X509Config extends WebSecurityConfigurerAdapter {
     http.requestMatcher(AnyRequestMatcher.INSTANCE)
   }
 
-  @Override
+  @Bean
   void configure(WebSecurity web) throws Exception {
     authConfig.configure(web)
   }

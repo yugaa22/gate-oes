@@ -47,13 +47,14 @@ class AuthConfigTest extends Specification {
     def httpSecurity = new HttpSecurity(
       Mock(ObjectPostProcessor),
       Mock(AuthenticationManagerBuilder),
-      new HashMap<Class<?, Object>>()
+      new HashMap<Class<?>, Object>()
     )
 
     when:
     authConfig.configure(httpSecurity)
 
     then:
+    //noinspection GrDeprecatedAPIUsage
     def filtered = httpSecurity.authorizeRequests().getUrlMappings()
       .stream()
       .filter({ it -> it.requestMatcher.getPattern() == "/webhooks/**" })
@@ -85,14 +86,14 @@ class AuthConfigTest extends Specification {
     def httpSecurity = new HttpSecurity(
       Mock(ObjectPostProcessor),
       Mock(AuthenticationManagerBuilder),
-      new HashMap<Class<?, Object>>()
+      new HashMap<Class<?>, Object>()
     )
 
     when:
     authConfig.configure(httpSecurity)
 
     then:
-    def filtered = httpSecurity.authorizeRequests().getUrlMappings()
+    def filtered = httpSecurity.getUrlMappings()
       .stream()
       .filter({ it -> it.requestMatcher.getPattern() == "/webhooks/**" })
       .filter( { it ->

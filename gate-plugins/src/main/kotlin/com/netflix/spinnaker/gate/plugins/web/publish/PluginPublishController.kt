@@ -28,6 +28,7 @@ import io.swagger.annotations.ApiOperation
 import java.lang.String.format
 import lombok.SneakyThrows
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -92,7 +93,7 @@ class PluginPublishController(
             .addFormDataPart(
               "plugin",
               format("%s-%s.zip", pluginId, pluginVersion),
-              RequestBody.create(MediaType.parse("application/octet-stream"), body)
+              RequestBody.create("application/octet-stream".toMediaTypeOrNull(), body)
             )
             .build()
         )
@@ -100,7 +101,7 @@ class PluginPublishController(
 
       val response = okHttpClient.newCall(request).execute()
       if (!response.isSuccessful) {
-        val reason = response.body()?.string() ?: "Unknown reason: ${response.code()}"
+        val reason = response.body?.string() ?: "Unknown reason: ${response.code}"
         throw SystemException("Failed to upload plugin binary: $reason")
       }
     }.call()

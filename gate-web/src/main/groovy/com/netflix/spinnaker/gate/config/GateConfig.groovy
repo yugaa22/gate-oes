@@ -71,8 +71,9 @@ import org.springframework.util.CollectionUtils
 import org.springframework.web.client.RestTemplate
 import redis.clients.jedis.JedisPool
 import retrofit.Endpoint
+import java.util.HashMap;
 
-import javax.servlet.*
+import jakarta.servlet.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -87,6 +88,7 @@ class GateConfig extends RedisHttpSessionConfiguration {
 
   private ServiceClientProvider serviceClientProvider
 
+  @SuppressWarnings('GrDeprecatedAPIUsage')
   @Value('${server.session.timeout-in-seconds:3600}')
   void setSessionTimeout(int maxInactiveIntervalInSeconds) {
     super.setMaxInactiveIntervalInSeconds(maxInactiveIntervalInSeconds)
@@ -97,6 +99,7 @@ class GateConfig extends RedisHttpSessionConfiguration {
     this.serviceClientProvider = serviceClientProvider
   }
 
+  @SuppressWarnings('GrDeprecatedAPIUsage')
   @Autowired
   GateConfig(@Value('${server.session.timeout-in-seconds:3600}') int maxInactiveIntervalInSeconds) {
     super.setMaxInactiveIntervalInSeconds(maxInactiveIntervalInSeconds)
@@ -137,7 +140,7 @@ class GateConfig extends RedisHttpSessionConfiguration {
   }
 
   @Bean
-  ExecutorService executorService() {
+   ExecutorService executorService() {
     Executors.newCachedThreadPool()
   }
 
@@ -170,8 +173,8 @@ class GateConfig extends RedisHttpSessionConfiguration {
   }
 
   @Bean
-  RequestContextProvider requestContextProvider() {
-    return new AuthenticatedRequestContextProvider();
+  static RequestContextProvider requestContextProvider() {
+    return new AuthenticatedRequestContextProvider()
   }
 
   @Bean
@@ -246,7 +249,7 @@ class GateConfig extends RedisHttpSessionConfiguration {
       }
 
       return new ClouddriverServiceSelector(
-        new SelectableService(selectors + defaultSelector), dynamicConfigService, contextProvider)
+        new SelectableService(selectors ), dynamicConfigService, contextProvider)
     }
 
     SelectableService selectableService = createClientSelector("clouddriver", ClouddriverService)
