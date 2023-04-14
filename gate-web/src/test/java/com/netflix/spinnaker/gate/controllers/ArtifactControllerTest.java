@@ -28,9 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.spinnaker.fiat.shared.FiatService;
 import com.netflix.spinnaker.gate.Main;
-import com.netflix.spinnaker.gate.services.internal.ClouddriverService;
-import com.netflix.spinnaker.gate.services.internal.ClouddriverServiceSelector;
+import com.netflix.spinnaker.gate.health.DownstreamServicesHealthIndicator;
+import com.netflix.spinnaker.gate.services.internal.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
@@ -69,6 +70,16 @@ public class ArtifactControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @Autowired private WebApplicationContext webApplicationContext;
+
+  @MockBean private Front50Service front50Service;
+
+  @MockBean private OrcaServiceSelector orcaServiceSelector;
+
+  @MockBean private FiatService fiatService;
+
+  @MockBean private ExtendedFiatService extendedFiatService;
+
+  @MockBean private DownstreamServicesHealthIndicator downstreamServicesHealthIndicator;
 
   @Test
   void TestFetch() throws Exception {

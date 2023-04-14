@@ -20,6 +20,7 @@ import com.netflix.spinnaker.gate.services.internal.EchoService
 import com.netflix.spinnaker.gate.services.internal.OrcaServiceSelector
 import com.netflix.spinnaker.gate.services.WebhookService
 import com.squareup.okhttp.mockwebserver.MockWebServer
+import jakarta.servlet.ServletException
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
@@ -88,7 +89,7 @@ class WebhooksControllerSpec extends Specification {
         .andExpect(status().isOk()).andReturn()
 
     then:
-    NestedServletException ex = thrown()
+    ServletException ex = thrown()
     ex.message.startsWith("Request processing failed; nested exception is retrofit.RetrofitError: Failed to connect to localhost")
   }
 }
