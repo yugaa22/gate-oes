@@ -27,7 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import ch.qos.logback.classic.Level;
+import com.netflix.spinnaker.fiat.shared.FiatService;
 import com.netflix.spinnaker.gate.Main;
+import com.netflix.spinnaker.gate.health.DownstreamServicesHealthIndicator;
+import com.netflix.spinnaker.gate.services.internal.*;
 import com.netflix.spinnaker.kork.common.Header;
 import com.netflix.spinnaker.kork.test.log.MemoryAppender;
 import com.netflix.spinnaker.security.AuthenticatedRequest;
@@ -38,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -60,6 +64,19 @@ public class GateConfigAuthenticatedRequestFilterTest {
 
   private static final String LOG_MESSAGE = " logged in api: ";
   private static final String NULL_VALUE = "null";
+
+  @MockBean private ClouddriverServiceSelector mockClouddriverServiceSelector;
+
+  @MockBean private ClouddriverService mockClouddriverService;
+  @MockBean private Front50Service front50Service;
+
+  @MockBean private OrcaServiceSelector orcaServiceSelector;
+
+  @MockBean private FiatService fiatService;
+
+  @MockBean private ExtendedFiatService extendedFiatService;
+
+  @MockBean private DownstreamServicesHealthIndicator downstreamServicesHealthIndicator;
 
   @RestController
   @RequestMapping(value = API_BASE)
