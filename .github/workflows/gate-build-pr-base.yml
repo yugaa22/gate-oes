@@ -39,10 +39,13 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_KEY }}
-      - name: Build base branch code
+      - name: Build_base_branch_code
         run: |
            git fetch origin ${{ github.event.pull_request.base.ref }}
            git checkout ${{ github.event.pull_request.base.ref }}
+           
+           git rev-parse --short HEAD
+           
            echo ::set-output name=VERSION::"$(git rev-parse --short HEAD)-$(date --utc +'%Y%m%d%H%M')"
            
            ./gradlew --no-daemon -PenableCrossCompilerPlugin=true gate-web:installDist -x test 
@@ -55,4 +58,4 @@ jobs:
           file: docker/ubi8/Dockerfile
           push: true
           tags: |
-            "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.build_variables.outputs.VERSION }}" 
+            "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.Build_base_branch_code.outputs.VERSION }}" 
